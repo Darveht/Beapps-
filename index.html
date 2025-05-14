@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario de App JSON</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+    input, textarea, select { width: 100%; padding: 8px; margin-top: 4px; }
+    button { margin-top: 20px; padding: 10px 20px; background: #00C853; color: white; border: none; cursor: pointer; }
+    textarea[readonly] { background: #e0e0e0; }
+  </style>
+</head>
+<body>
+
+<h2>Formulario para generar JSON de App</h2>
+
+<form id="appForm">
+  <!-- Campos básicos -->
+  <label>Nombre</label>
+  <input type="text" id="name">
+
+  <label>Desarrollador</label>
+  <input type="text" id="developer">
+
+  <label>Paquete (packageName)</label>
+  <input type="text" id="packageName">
+
+  <label>Categoría</label>
+  <input type="text" id="category">
+
+  <label>Calificación (rating)</label>
+  <input type="number" step="0.1" id="rating">
+
+  <label>Tamaño</label>
+  <input type="text" id="size">
+
+  <label>Icono (URL)</label>
+  <input type="url" id="icon">
+
+  <label>Descripción</label>
+  <textarea id="description"></textarea>
+
+  <label>Descargas</label>
+  <input type="text" id="downloads">
+
+  <label>Banner Gradient</label>
+  <input type="text" id="bannerGradient">
+
+  <label>¿Es segura?</label>
+  <select id="security">
+    <option value="true">Sí</option>
+    <option value="false">No</option>
+  </select>
+
+  <label>Versión</label>
+  <input type="text" id="version">
+
+  <label>¿Disponible?</label>
+  <select id="isAvailable">
+    <option value="true">Sí</option>
+    <option value="false">No</option>
+  </select>
+
+  <label>Fecha de lanzamiento</label>
+  <input type="date" id="releaseDate">
+
+  <label>Países permitidos (Ctrl o Cmd para seleccionar varios)</label>
+  <select id="allowedCountries" multiple size="10">
+    <option value="US">Estados Unidos (US)</option>
+  <option value="CA">Canadá (CA)</option>
+  <option value="GB">Reino Unido (GB)</option>
+  <option value="AU">Australia (AU)</option>
+  <option value="NZ">Nueva Zelanda (NZ)</option>
+  <option value="MX">México (MX)</option>
+  <option value="ES">España (ES)</option>
+  <option value="AR">Argentina (AR)</option>
+  <option value="BR">Brasil (BR)</option>
+  <option value="CL">Chile (CL)</option>
+  <option value="CO">Colombia (CO)</option>
+  <option value="PE">Perú (PE)</option>
+  <option value="VE">Venezuela (VE)</option>
+  <option value="UY">Uruguay (UY)</option>
+  <option value="PY">Paraguay (PY)</option>
+  <option value="BO">Bolivia (BO)</option>
+  <option value="EC">Ecuador (EC)</option>
+  <option value="GT">Guatemala (GT)</option>
+  <option value="CR">Costa Rica (CR)</option>
+  <option value="PA">Panamá (PA)</option>
+  <option value="DO">República Dominicana (DO)</option>
+  <option value="CU">Cuba (CU)</option>
+  <option value="HN">Honduras (HN)</option>
+  <option value="NI">Nicaragua (NI)</option>
+  <option value="SV">El Salvador (SV)</option>
+  <option value="DE">Alemania (DE)</option>
+  <option value="FR">Francia (FR)</option>
+  <option value="IT">Italia (IT)</option>
+  <option value="NL">Países Bajos (NL)</option>
+  <option value="BE">Bélgica (BE)</option>
+  <option value="CH">Suiza (CH)</option>
+  <option value="SE">Suecia (SE)</option>
+  <option value="NO">Noruega (NO)</option>
+  <option value="DK">Dinamarca (DK)</option>
+  <option value="FI">Finlandia (FI)</option>
+  <option value="IE">Irlanda (IE)</option>
+  <option value="PT">Portugal (PT)</option>
+  <option value="RU">Rusia (RU)</option>
+  <option value="CN">China (CN)</option>
+  <option value="JP">Japón (JP)</option>
+  <option value="KR">Corea del Sur (KR)</option>
+  <option value="IN">India (IN)</option>
+  <option value="ID">Indonesia (ID)</option>
+  <option value="PH">Filipinas (PH)</option>
+  <option value="TH">Tailandia (TH)</option>
+  <option value="MY">Malasia (MY)</option>
+  <option value="VN">Vietnam (VN)</option>
+  <option value="ZA">Sudáfrica (ZA)</option>
+  <option value="EG">Egipto (EG)</option>
+  <option value="NG">Nigeria (NG)</option>
+  </select>
+
+  <label>Link Android</label>
+  <input type="url" id="android">
+
+  <label>Link iOS</label>
+  <input type="url" id="ios">
+
+  <label>Versiones anteriores (separadas por coma)</label>
+  <input type="text" id="previousVersions">
+
+  <label>Media (imágenes o videos, separados por coma)</label>
+  <input type="text" id="media">
+
+  <button type="button" onclick="generateJSON()">Generar JSON</button>
+</form>
+
+<h3>Resultado JSON:</h3>
+<textarea id="output" rows="25" readonly></textarea>
+
+<script>
+function generateJSON() {
+  const selectedCountries = Array.from(document.getElementById('allowedCountries').selectedOptions)
+                                  .map(option => option.value);
+
+  const mediaInput = document.getElementById('media').value.split(',').map(url => {
+    const trimmed = url.trim();
+    return {
+      type: trimmed.includes('youtube') || trimmed.includes('.mp4') ? 'video' : 'image',
+      url: trimmed
+    };
+  });
+
+  const data = {
+    name: document.getElementById('name').value,
+    developer: document.getElementById('developer').value,
+    packageName: document.getElementById('packageName').value,
+    category: document.getElementById('category').value,
+    rating: parseFloat(document.getElementById('rating').value),
+    size: document.getElementById('size').value,
+    icon: document.getElementById('icon').value,
+    description: document.getElementById('description').value,
+    downloads: document.getElementById('downloads').value,
+    bannerGradient: document.getElementById('bannerGradient').value,
+    security: document.getElementById('security').value === "true",
+    version: document.getElementById('version').value,
+    isAvailable: document.getElementById('isAvailable').value === "true",
+    releaseDate: document.getElementById('releaseDate').value + "T00:00:00",
+    allowedCountries: selectedCountries,
+    platforms: {
+      android: document.getElementById('android').value,
+      ios: document.getElementById('ios').value
+    },
+    previousVersions: document.getElementById('previousVersions').value.split(',').map(v => v.trim()),
+    media: mediaInput
+  };
+
+  document.getElementById('output').value = JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>
